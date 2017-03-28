@@ -3,6 +3,7 @@ package com.dieam.reactnativepushnotification.modules;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -65,7 +66,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                     // Otherwise wait for construction, then send the notification
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
-                            handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                            handleRemotePushNotification(getApplicationContext(), bundle);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
@@ -85,7 +86,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         }
     }
 
-    private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
+    private void handleRemotePushNotification(Context context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
@@ -95,23 +96,25 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Boolean isForeground = isApplicationInForeground();
 
-        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
-        bundle.putBoolean("foreground", isForeground);
-        bundle.putBoolean("userInteraction", false);
-        jsDelivery.notifyNotification(bundle);
-
-        // If contentAvailable is set to true, then send out a remote fetch event
-        if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
-            jsDelivery.notifyRemoteFetch(bundle);
+        if (context instanceof ReactApplicationContext)
+        {
+            RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery((ReactApplicationContext)context);
+            bundle.putBoolean("foreground", isForeground);
+            bundle.putBoolean("userInteraction", false);
+            jsDelivery.notifyNotification(bundle);
+            // If contentAvailable is set to true, then send out a remote fetch event
+            if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+                jsDelivery.notifyRemoteFetch(bundle);
+            }
         }
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        if (!isForeground) {
+        //if (!isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
-        }
+        //}
     }
 
     private boolean isApplicationInForeground() {
