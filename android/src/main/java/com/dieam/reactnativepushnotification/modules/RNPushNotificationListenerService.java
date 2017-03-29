@@ -63,16 +63,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 if (context != null) {
                     handleRemotePushNotification((ReactApplicationContext) context, bundle);
                 } else {
-                    // Otherwise wait for construction, then send the notification
-                    mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                        public void onReactContextInitialized(ReactContext context) {
-                            handleRemotePushNotification(getApplicationContext(), bundle);
-                        }
-                    });
-                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
-                        // Construct it in the background
-                        mReactInstanceManager.createReactContextInBackground();
-                    }
+                    handleRemotePushNotification(getApplicationContext(), bundle);
                 }
             }
         });
