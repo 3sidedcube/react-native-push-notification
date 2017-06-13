@@ -16,7 +16,7 @@ var Notifications = {
 	onRegister: false,
 	onError: false,
 	onNotification: false,
-  onRemoteFetch: false,
+  	onRemoteFetch: false,
 	isLoaded: false,
 	hasPoppedInitialNotification: false,
 
@@ -46,14 +46,24 @@ Notifications.callNative = function(name: String, params: Array) {
  * Configure local and remote notifications
  * @param {Object}		options
  * @param {function}	options.onRegister - Fired when the user registers for remote notifications.
+ * @param {function}	options.onResponse - Fired when the user responds to a notification
  * @param {function}	options.onNotification - Fired when a remote notification is received.
  * @param {function} 	options.onError - None
+ * @param {function}	options.onWillPresent - Fired when a remote notification will be presented and app is in foreground.
  * @param {Object}		options.permissions - Permissions list
  * @param {Boolean}		options.requestPermissions - Check permissions when register
  */
 Notifications.configure = function(options: Object) {
 	if ( typeof options.onRegister !== 'undefined' ) {
 		this.onRegister = options.onRegister;
+	}
+
+	if ( typeof options.onResponse !== 'undefined' ) {
+		this.onResponse = options.onResponse;
+	}
+
+	if ( typeof options.onWillPresent !== 'undefined' ) {
+		this.onWillPresent = options.onWillPresent;
 	}
 
 	if ( typeof options.onError !== 'undefined' ) {
@@ -84,6 +94,10 @@ Notifications.configure = function(options: Object) {
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
 		Platform.OS === 'android' ? this.callNative( 'addEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
+		if ( Platform.OS === 'ios' ) {
+			this.callNative( 'addEventListener', [ 'response', this._onResponse ] );
+			this.callNative( 'addEventListener', [ 'willPresent', this._onWillPresent ]);
+		}
 
 		this.isLoaded = true;
 	}
@@ -110,6 +124,10 @@ Notifications.unregister = function() {
 	this.callNative( 'removeEventListener', [ 'notification', this._onNotification ] )
 	this.callNative( 'removeEventListener', [ 'localNotification', this._onNotification ] )
 	Platform.OS === 'android' ? this.callNative( 'removeEventListener', [ 'remoteFetch', this._onRemoteFetch ] ) : null
+	if ( Platform.OS === 'ios' ) {
+		this.callNative( 'removeEventListener', [ 'response', this._onResponse ] );
+		this.callNative( 'removeEventListener', [ 'willPresent', this._onWillPresent ]);
+	}
 	this.isLoaded = false;
 };
 
