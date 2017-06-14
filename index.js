@@ -90,6 +90,8 @@ Notifications.configure = function(options: Object) {
 		this._onRegister = this._onRegister.bind(this);
 		this._onNotification = this._onNotification.bind(this);
 		this._onRemoteFetch = this._onRemoteFetch.bind(this);
+		this._onResponse = this._onResponse.bind(this);
+		this._onWillPresent = this._onWillPresent.bind(this);
 		this.callNative( 'addEventListener', [ 'register', this._onRegister ] );
 		this.callNative( 'addEventListener', [ 'notification', this._onNotification ] );
 		this.callNative( 'addEventListener', [ 'localNotification', this._onNotification ] );
@@ -139,7 +141,7 @@ Notifications.unregister = function() {
  * @param {String}		details.ticker -  ANDROID ONLY: The ticker displayed in the status bar.
  * @param {Object}		details.userInfo -  iOS ONLY: The userInfo used in the notification alert.
  */
-Notifications.localNotification = function(details: Object) {
+Notifications.localNotification = function(details: Object, completion: Function) {
 	if ( Platform.OS === 'ios' ) {
 		// https://developer.apple.com/reference/uikit/uilocalnotification
 
@@ -160,7 +162,7 @@ Notifications.localNotification = function(details: Object) {
 			soundName: soundName,
 			applicationIconBadgeNumber: details.number,
 			userInfo: details.userInfo
-		});
+		}, completion);
 	} else {
 		this.handler.presentLocalNotification(details);
 	}
@@ -171,7 +173,7 @@ Notifications.localNotification = function(details: Object) {
  * @param {Object}		details (same as localNotification)
  * @param {Date}		details.date - The date and time when the system should deliver the notification
  */
-Notifications.localNotificationSchedule = function(details: Object) {
+Notifications.localNotificationSchedule = function(details: Object, completion: Function) {
 	if ( Platform.OS === 'ios' ) {
 
 		let soundName = details.soundName ? details.soundName : 'default'; // play sound (and vibrate) as default behaviour
@@ -186,7 +188,7 @@ Notifications.localNotificationSchedule = function(details: Object) {
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
 			userInfo: details.userInfo
-		});
+		}, completion);
 	} else {
 		details.fireDate = details.date.getTime();
 		delete details.date;
