@@ -17,6 +17,8 @@ var Notifications = {
 	onError: false,
 	onNotification: false,
   	onRemoteFetch: false,
+  	onResponse: false,
+  	onWillPresent: false,
 	isLoaded: false,
 	hasPoppedInitialNotification: false,
 
@@ -185,6 +187,10 @@ Notifications.localNotificationSchedule = function(details: Object, completion: 
 		this.handler.scheduleLocalNotification({
 			fireDate: details.date.toISOString(),
 			alertBody: details.message,
+			alertSubtitle: details.subtitle,
+			alertTitle: details.title,
+			category: details.category,
+			isSilent: !details.playSound,
 			soundName: soundName,
 			applicationIconBadgeNumber: parseInt(details.number, 10),
 			userInfo: details.userInfo
@@ -212,6 +218,44 @@ Notifications._onRemoteFetch = function(notificationData: Object) {
 	}
 };
 
+Notifications._onResponse = function(data: Object, isFromBackground = null) {
+	if ( isFromBackground === null ) {
+		isFromBackground = (
+			data.notification.foreground === false ||
+			AppState.currentState === 'background'
+		);
+	}
+
+	if ( this.onResponse !== false ) {
+		this.onResponse({
+			notification: {
+				foreground: ! isFromBackground,
+				userInteraction: isFromBackground,
+				message: data.notification.getMessage(),
+				title: data.notification.getTitle(),
+				subtitle: data.notification.getSubtitle(),
+				data: data.notification.getData(),
+				badge: data.notification.getBadgeCount(),
+				alert: data.notification.getAlert(),
+				sound: data.notification.getSound(),
+				threadId: data.notification.getThreadId(),
+				trigger: data.notification.getTrigger(),
+				category: data.notification.getCategory(),
+				id: data.notification.getId()
+			},
+			action: data.action,
+			userText: data.userText,
+			completion: data.notification.completeResponse
+		})
+	}
+}
+
+Notifications._onWillPresent = function(notificationData: Object) {
+	if ( this.onWillPresent !== false ) {
+		this.onWillPresent(notificationData)
+	}
+}
+
 Notifications._onNotification = function(data, isFromBackground = null) {
 	if ( isFromBackground === null ) {
 		isFromBackground = (
@@ -226,10 +270,16 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 				foreground: ! isFromBackground,
 				userInteraction: isFromBackground,
 				message: data.getMessage(),
+				title: data.getTitle(),
+				subtitle: data.getSubtitle(),
 				data: data.getData(),
 				badge: data.getBadgeCount(),
 				alert: data.getAlert(),
-				sound: data.getSound()
+				sound: data.getSound(),
+				threadId: data.getThreadId(),
+				trigger: data.getTrigger(),
+				category: data.getCategory(),
+				id: data.getId()
 			});
 		} else {
 			var notificationData = {
