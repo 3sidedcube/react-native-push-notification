@@ -12,10 +12,10 @@
 'use strict';
 
 const NativeEventEmitter = require('NativeEventEmitter');
-const RCTPushNotificationManager = require('NativeModules').PushNotificationManager;
+const RNPushNotificationManager = require('NativeModules').PushNotificationManager;
 const invariant = require('fbjs/lib/invariant');
 
-const PushNotificationEmitter = new NativeEventEmitter(RCTPushNotificationManager);
+const PushNotificationEmitter = new NativeEventEmitter(RNPushNotificationManager);
 
 const _notifHandlers = new Map();
 
@@ -91,8 +91,8 @@ export type PushNotificationEventName = $Enum<{
  *
  * [Manually link](docs/linking-libraries-ios.html#manual-linking) the PushNotificationIOS library
  *
- * - Add the following to your Project: `node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj`
- * - Add the following to `Link Binary With Libraries`: `libRCTPushNotification.a`
+ * - Add the following to your Project: `node_modules/react-native-push-notification/ios/RNPushNotification.xcodeproj`
+ * - Add the following to `Link Binary With Libraries`: `libRNPushNotification.a`
  *
  * Finally, to enable support for `notification` and `register` events you need to augment your AppDelegate.
  *
@@ -106,7 +106,7 @@ export type PushNotificationEventName = $Enum<{
  *
  * At the top of your `AppDelegate.m`:
  *
- *   `#import <React/RCTPushNotificationManager.h>`
+ *   `#import "RNPushNotificationManager.h"
  *
  * At the top of your AppDelegate's `didFinishLaunchingWithOptions` add the following:
  *
@@ -118,38 +118,38 @@ export type PushNotificationEventName = $Enum<{
  *    // Required to register for notifications
  *    - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
  *    {
- *     [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
+ *     [RNPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
  *    }
  *    // Required for the register event.
  *    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
  *    {
- *     [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+ *     [RNPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
  *    }
  *    // Required for the notification event. You must call the completion handler after handling the remote notification.
  *    - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
  *                                                           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
  *    {
- *      [RCTPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+ *      [RNPushNotificationManager didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
  *    }
  *    // Required for the registrationError event.
  *    - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
  *    {
- *     [RCTPushNotificationManager didFailToRegisterForRemoteNotificationsWithError:error];
+ *     [RNPushNotificationManager didFailToRegisterForRemoteNotificationsWithError:error];
  *    }
  *    // Required for the localNotification event.
  *    - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
  *    {
- *     [RCTPushNotificationManager didReceiveLocalNotification:notification];
+ *     [RNPushNotificationManager didReceiveLocalNotification:notification];
  *    }  
  *    // Required for presenting notifications when the app is in the foreground (willPresent event).
  *    - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler 
  *    {
- *     [RCTPushNotificationManager willPresentNotification:notification showCompletionHandler:completionHandler];
+ *     [RNPushNotificationManager willPresentNotification:notification showCompletionHandler:completionHandler];
  *    }
  *    // Required for handling notification responses (clicking actions or dismissing).
  *    - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler
  *    {
- *     [RCTPushNotificationManager didReceiveNotificationResponse:response completionHandler:completionHandler];
+ *     [RNPushNotificationManager didReceiveNotificationResponse:response completionHandler:completionHandler];
  *    }
  *   ```
  */
@@ -204,7 +204,7 @@ class PushNotificationIOS {
    * - `applicationIconBadgeNumber` (optional) : The number to display as the app's icon badge. The default value of this property is 0, which means that no badge is displayed.
    */
   static presentLocalNotification(details: Object, callback: Function) {
-    RCTPushNotificationManager.presentLocalNotification(details, callback || function(){});
+    RNPushNotificationManager.presentLocalNotification(details, callback || function(){});
   }
 
   /**
@@ -223,21 +223,21 @@ class PushNotificationIOS {
    * - `repeatInterval` : The interval to repeat as a string.  Possible values: `minute`, `hour`, `day`, `week`, `month`, `year`.
    */
   static scheduleLocalNotification(details: Object, callback: Function) {
-    RCTPushNotificationManager.scheduleLocalNotification(details, callback || function(){});
+    RNPushNotificationManager.scheduleLocalNotification(details, callback || function(){});
   }
 
   /**
    * Cancels all scheduled localNotifications
    */
   static cancelAllLocalNotifications() {
-    RCTPushNotificationManager.cancelAllLocalNotifications();
+    RNPushNotificationManager.cancelAllLocalNotifications();
   }
 
   /**
    * Remove all delivered notifications from Notification Center
    */
   static removeAllDeliveredNotifications(): void {
-    RCTPushNotificationManager.removeAllDeliveredNotifications();
+    RNPushNotificationManager.removeAllDeliveredNotifications();
   }
 
   /**
@@ -255,7 +255,7 @@ class PushNotificationIOS {
    * - `thread-id`  : The thread identifier of this notification, if has one.
    */
   static getDeliveredNotifications(callback: (notifications: [Object]) => void): void {
-    RCTPushNotificationManager.getDeliveredNotifications(callback);
+    RNPushNotificationManager.getDeliveredNotifications(callback);
   }
 
   /**
@@ -264,21 +264,21 @@ class PushNotificationIOS {
    * @param identifiers Array of notification identifiers
    */
   static removeDeliveredNotifications(identifiers: [string]): void {
-    RCTPushNotificationManager.removeDeliveredNotifications(identifiers);
+    RNPushNotificationManager.removeDeliveredNotifications(identifiers);
   }
 
   /**
    * Sets the badge number for the app icon on the home screen
    */
   static setApplicationIconBadgeNumber(number: number) {
-    RCTPushNotificationManager.setApplicationIconBadgeNumber(number);
+    RNPushNotificationManager.setApplicationIconBadgeNumber(number);
   }
 
   /**
    * Gets the current badge number for the app icon on the home screen
    */
   static getApplicationIconBadgeNumber(callback: Function) {
-    RCTPushNotificationManager.getApplicationIconBadgeNumber(callback);
+    RNPushNotificationManager.getApplicationIconBadgeNumber(callback);
   }
 
   /**
@@ -289,18 +289,18 @@ class PushNotificationIOS {
    * in the `userInfo` argument.
    */
   static cancelLocalNotifications(userInfo: Object) {
-    RCTPushNotificationManager.cancelLocalNotifications(userInfo);
+    RNPushNotificationManager.cancelLocalNotifications(userInfo);
   }
 
   /**
    * Gets the local notifications that are currently scheduled.
    */
   static getScheduledLocalNotifications(callback: Function) {
-    RCTPushNotificationManager.getScheduledLocalNotifications(callback);
+    RNPushNotificationManager.getScheduledLocalNotifications(callback);
   }
 
   static setNotificationCategories(categories: [Object]) {
-    RCTPushNotificationManager.setNotificationCategories(categories);
+    RNPushNotificationManager.setNotificationCategories(categories);
   }
   
 
@@ -442,7 +442,7 @@ class PushNotificationIOS {
         sound: true
       };
     }
-    return RCTPushNotificationManager.requestPermissions(requestedPermissions);
+    return RNPushNotificationManager.requestPermissions(requestedPermissions);
   }
 
   /**
@@ -454,7 +454,7 @@ class PushNotificationIOS {
    * the Settings app. Apps unregistered through this method can always re-register.
    */
   static abandonPermissions() {
-    RCTPushNotificationManager.abandonPermissions();
+    RNPushNotificationManager.abandonPermissions();
   }
 
   /**
@@ -470,7 +470,7 @@ class PushNotificationIOS {
       typeof callback === 'function',
       'Must provide a valid callback'
     );
-    RCTPushNotificationManager.checkPermissions(callback);
+    RNPushNotificationManager.checkPermissions(callback);
   }
 
   /**
@@ -478,7 +478,7 @@ class PushNotificationIOS {
    * object if the app was launched by a push notification, or `null` otherwise.
    */
   static getInitialNotification(): Promise<?PushNotificationIOS> {
-    return RCTPushNotificationManager.getInitialNotification().then(notification => {
+    return RNPushNotificationManager.getInitialNotification().then(notification => {
       return notification && new PushNotificationIOS(notification);
     });
   }
@@ -548,7 +548,7 @@ class PushNotificationIOS {
     }
     this._responseCompleteCallbackCalled = true;
 
-    RCTPushNotificationManager.onFinishNotificationResponse(this._notificationId);
+    RNPushNotificationManager.onFinishNotificationResponse(this._notificationId);
   }
 
   /**
@@ -570,7 +570,7 @@ class PushNotificationIOS {
     }
     this._remoteNotificationCompleteCalllbackCalled = true;
 
-    RCTPushNotificationManager.onFinishRemoteNotification(this._notificationId, fetchResult);
+    RNPushNotificationManager.onFinishRemoteNotification(this._notificationId, fetchResult);
   }
 
   /**
@@ -591,7 +591,7 @@ class PushNotificationIOS {
     }
     this._showForegroundCompleteCallbackCalled = true;
 
-    RCTPushNotificationManager.onPresentForegroundNotification(this._notificationId, presentationOptions)
+    RNPushNotificationManager.onPresentForegroundNotification(this._notificationId, presentationOptions)
   }
 
   /**
@@ -673,4 +673,4 @@ class PushNotificationIOS {
   }
 }
 
-module.exports = PushNotificationIOS;
+module.exports = RNPushNotificationIOS;

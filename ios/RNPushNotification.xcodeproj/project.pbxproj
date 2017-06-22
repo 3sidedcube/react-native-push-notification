@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		148699CF1ABD045300480536 /* RCTPushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 148699CE1ABD045300480536 /* RCTPushNotificationManager.m */; };
-		3D0574931DE6009C00184BB4 /* RCTPushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 148699CE1ABD045300480536 /* RCTPushNotificationManager.m */; };
+		148699CF1ABD045300480536 /* RNPushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 148699CE1ABD045300480536 /* RNPushNotificationManager.m */; };
+		3D0574931DE6009C00184BB4 /* RNPushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 148699CE1ABD045300480536 /* RNPushNotificationManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,10 +33,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libRCTPushNotification.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTPushNotification.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		148699CD1ABD045300480536 /* RCTPushNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RCTPushNotificationManager.h; sourceTree = "<group>"; };
-		148699CE1ABD045300480536 /* RCTPushNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPushNotificationManager.m; sourceTree = "<group>"; };
-		3D05745F1DE6004600184BB4 /* libRCTPushNotification-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRCTPushNotification-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		134814201AA4EA6300B7C361 /* libRNPushNotification.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNPushNotification.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		148699CD1ABD045300480536 /* RNPushNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RNPushNotificationManager.h; sourceTree = "<group>"; };
+		148699CE1ABD045300480536 /* RNPushNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPushNotificationManager.m; sourceTree = "<group>"; };
+		3D05745F1DE6004600184BB4 /* libRNPushNotification-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRNPushNotification-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libRCTPushNotification.a */,
+				134814201AA4EA6300B7C361 /* libRNPushNotification.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,10 +68,10 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				148699CD1ABD045300480536 /* RCTPushNotificationManager.h */,
-				148699CE1ABD045300480536 /* RCTPushNotificationManager.m */,
+				148699CD1ABD045300480536 /* RNPushNotificationManager.h */,
+				148699CE1ABD045300480536 /* RNPushNotificationManager.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
-				3D05745F1DE6004600184BB4 /* libRCTPushNotification-tvOS.a */,
+				3D05745F1DE6004600184BB4 /* libRNPushNotification-tvOS.a */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -80,9 +80,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3D05745E1DE6004600184BB4 /* RCTPushNotification-tvOS */ = {
+		3D05745E1DE6004600184BB4 /* RNPushNotification-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3D0574671DE6004600184BB4 /* Build configuration list for PBXNativeTarget "RCTPushNotification-tvOS" */;
+			buildConfigurationList = 3D0574671DE6004600184BB4 /* Build configuration list for PBXNativeTarget "RNPushNotification-tvOS" */;
 			buildPhases = (
 				3D05745B1DE6004600184BB4 /* Sources */,
 				3D05745C1DE6004600184BB4 /* Frameworks */,
@@ -92,14 +92,14 @@
 			);
 			dependencies = (
 			);
-			name = "RCTPushNotification-tvOS";
+			name = "RNPushNotification-tvOS";
 			productName = "RCTPushNotification-tvOS";
-			productReference = 3D05745F1DE6004600184BB4 /* libRCTPushNotification-tvOS.a */;
+			productReference = 3D05745F1DE6004600184BB4 /* libRNPushNotification-tvOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		58B511DA1A9E6C8500147676 /* RCTPushNotification */ = {
+		58B511DA1A9E6C8500147676 /* RNPushNotification */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RCTPushNotification" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNPushNotification" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -109,9 +109,9 @@
 			);
 			dependencies = (
 			);
-			name = RCTPushNotification;
+			name = RNPushNotification;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libRCTPushNotification.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libRNPushNotification.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -132,7 +132,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RCTPushNotification" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNPushNotification" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -144,8 +144,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* RCTPushNotification */,
-				3D05745E1DE6004600184BB4 /* RCTPushNotification-tvOS */,
+				58B511DA1A9E6C8500147676 /* RNPushNotification */,
+				3D05745E1DE6004600184BB4 /* RNPushNotification-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -155,7 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D0574931DE6009C00184BB4 /* RCTPushNotificationManager.m in Sources */,
+				3D0574931DE6009C00184BB4 /* RNPushNotificationManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,7 +163,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				148699CF1ABD045300480536 /* RCTPushNotificationManager.m in Sources */,
+				148699CF1ABD045300480536 /* RNPushNotificationManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +303,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = RCTPushNotification;
+				PRODUCT_NAME = RNPushNotification;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 			};
 			name = Debug;
@@ -314,14 +314,14 @@
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = RCTPushNotification;
+				PRODUCT_NAME = RNPushNotification;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3D0574671DE6004600184BB4 /* Build configuration list for PBXNativeTarget "RCTPushNotification-tvOS" */ = {
+		3D0574671DE6004600184BB4 /* Build configuration list for PBXNativeTarget "RNPushNotification-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3D0574651DE6004600184BB4 /* Debug */,
@@ -330,7 +330,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RCTPushNotification" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNPushNotification" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -339,7 +339,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RCTPushNotification" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNPushNotification" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,

@@ -10,21 +10,21 @@
 #import <React/RCTEventEmitter.h>
 #import <UserNotifications/UserNotifications.h>
 
-extern NSString *const RCTRemoteNotificationReceived;
+extern NSString *const RNRemoteNotificationReceived;
 
-@interface RCTPushNotificationManager : RCTEventEmitter
+@interface RNPushNotificationManager : RCTEventEmitter
 
-typedef void (^RCTRemoteNotificationCallback)(UIBackgroundFetchResult result);
-typedef void (^RCTWillPresentNotificationCallback)(UNNotificationPresentationOptions options);
-typedef void (^RCTNotificationResponseCallback)(void);
+typedef void (^RNRemoteNotificationCallback)(UIBackgroundFetchResult result);
+typedef void (^RNWillPresentNotificationCallback)(UNNotificationPresentationOptions options);
+typedef void (^RNNotificationResponseCallback)(void);
 
 #if !TARGET_OS_TV
 + (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
 + (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
-+ (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(RCTNotificationResponseCallback)completionHandler;
++ (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(RNNotificationResponseCallback)completionHandler;
 + (void)didReceiveRemoteNotification:(NSDictionary *)notification;
-+ (void)didReceiveRemoteNotification:(NSDictionary *)notification fetchCompletionHandler:(RCTRemoteNotificationCallback)completionHandler;
-+ (void)willPresentNotification:(UNNotification *)notification showCompletionHandler:(RCTWillPresentNotificationCallback)completionHandler;
++ (void)didReceiveRemoteNotification:(NSDictionary *)notification fetchCompletionHandler:(RNRemoteNotificationCallback)completionHandler;
++ (void)willPresentNotification:(UNNotification *)notification showCompletionHandler:(RNWillPresentNotificationCallback)completionHandler;
 + (void)didReceiveLocalNotification:(UILocalNotification *)notification;
 + (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
 #endif
