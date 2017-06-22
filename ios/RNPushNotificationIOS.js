@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule PushNotificationIOS
+ * @providesModule RNPushNotificationIOS
  * @flow
  */
 'use strict';
@@ -33,17 +33,17 @@ export type FetchResult = {
 };
 
 /**
- * An event emitted by PushNotificationIOS.
+ * An event emitted by RNPushNotificationIOS.
  */
 export type PushNotificationEventName = $Enum<{
   /**
    * Fired when a remote notification is received. The handler will be invoked
-   * with an instance of `PushNotificationIOS`.
+   * with an instance of `RNPushNotificationIOS`.
    */
   notification: string,
   /**
    * Fired when a local notification is received. The handler will be invoked
-   * with an instance of `PushNotificationIOS`.
+   * with an instance of `RNPushNotificationIOS`.
    */
   localNotification: string,
   /**
@@ -60,13 +60,13 @@ export type PushNotificationEventName = $Enum<{
   /**
    * Fired when the user responds to a notification by opening the application, 
    * dismissing the notification or choosing a UNNotificationAction. The handler
-   * will be invoked with {notification: `PushNotificationIOS`, action: string, 
+   * will be invoked with {notification: `RNPushNotificationIOS`, action: string, 
    * userText: [string]}. (Only available iOS >= 10)
    */
   response: string,
   /**
    * Fired when a local notification will be presented in the foreground. The handler
-   * will be invoked with an instance of `PushNotificationIOS`. (Only available iOS >= 10)
+   * will be invoked with an instance of `RNPushNotificationIOS`. (Only available iOS >= 10)
    */
   willPresent: string
 }>;
@@ -89,7 +89,7 @@ export type PushNotificationEventName = $Enum<{
  * To get up and running, [configure your notifications with Apple](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html#//apple_ref/doc/uid/TP40012582-CH26-SW6)
  * and your server-side system.
  *
- * [Manually link](docs/linking-libraries-ios.html#manual-linking) the PushNotificationIOS library
+ * [Manually link](docs/linking-libraries-ios.html#manual-linking) the RNPushNotificationIOS library
  *
  * - Add the following to your Project: `node_modules/react-native-push-notification/ios/RNPushNotification.xcodeproj`
  * - Add the following to `Link Binary With Libraries`: `libRNPushNotification.a`
@@ -153,7 +153,7 @@ export type PushNotificationEventName = $Enum<{
  *    }
  *   ```
  */
-class PushNotificationIOS {
+class RNPushNotificationIOS {
   _data: Object;
   _alert: string | Object;
   _sound: string;
@@ -311,9 +311,9 @@ class PushNotificationIOS {
    * Valid events are:
    *
    * - `notification` : Fired when a remote notification is received. The
-   *   handler will be invoked with an instance of `PushNotificationIOS`.
+   *   handler will be invoked with an instance of `RNPushNotificationIOS`.
    * - `localNotification` : Fired when a local notification is received. The
-   *   handler will be invoked with an instance of `PushNotificationIOS`.
+   *   handler will be invoked with an instance of `RNPushNotificationIOS`.
    * - `register`: Fired when the user registers for remote notifications. The
    *   handler will be invoked with a hex string representing the deviceToken.
    * - `registrationError`: Fired when the user fails to register for remote
@@ -323,29 +323,29 @@ class PushNotificationIOS {
    * - `response`: Fired when the user responds to a notification, by opening the 
    *   application, dismissing the notification or choosing a UNNotificationAction.
    *   The handler will be invoked with
-   *   {notification: `PushNotificationIOS`, action: string, userText: [string]}
+   *   {notification: `RNPushNotificationIOS`, action: string, userText: [string]}
    * - `willPresent`: Fired if a notification is received in the foreground
    *   on a device running iOS 10 or greater. The handler will be invoked with
-   *   an instance of `PushNotificationIOS`.
+   *   an instance of `RNPushNotificationIOS`.
    */
   static addEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
       type === 'notification' || type === 'register' || type === 'registrationError' || type === 'localNotification' || type === 'willPresent' || type === 'response',
-      'PushNotificationIOS only supports `notification`, `register`, `registrationError`, `willPresent`, `response`, and `localNotification` events'
+      'RNPushNotificationIOS only supports `notification`, `register`, `registrationError`, `willPresent`, `response`, and `localNotification` events'
     );
     var listener;
     if (type === 'notification') {
       listener =  PushNotificationEmitter.addListener(
         DEVICE_NOTIF_EVENT,
         (notifData) => {
-          handler(new PushNotificationIOS(notifData));
+          handler(new RNPushNotificationIOS(notifData));
         }
       );
     } else if (type === 'localNotification') {
       listener = PushNotificationEmitter.addListener(
         DEVICE_LOCAL_NOTIF_EVENT,
         (notifData) => {
-          handler(new PushNotificationIOS(notifData));
+          handler(new RNPushNotificationIOS(notifData));
         }
       );
     } else if (type === 'register') {
@@ -367,7 +367,7 @@ class PushNotificationIOS {
         NOTIF_RESPONSE_EVENT,
         (notifData) => {
           handler({
-            notification: new PushNotificationIOS(notifData.notification),
+            notification: new RNPushNotificationIOS(notifData.notification),
             action: notifData.action,
             userText: notifData.userText
           });
@@ -377,7 +377,7 @@ class PushNotificationIOS {
       listener = PushNotificationEmitter.addListener(
         DEVICE_WILLSHOW_NOTIF_EVENT,
         (notifData) => {
-          handler(new PushNotificationIOS(notifData));
+          handler(new RNPushNotificationIOS(notifData));
         }
       )
     }
@@ -391,7 +391,7 @@ class PushNotificationIOS {
   static removeEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
       type === 'notification' || type === 'register' || type === 'registrationError' || type === 'localNotification' || type === 'willPresent' || type === 'response',
-      'PushNotificationIOS only supports `notification`, `register`, `registrationError`, and `localNotification` events'
+      'RNPushNotificationIOS only supports `notification`, `register`, `registrationError`, and `localNotification` events'
     );
     var listener = _notifHandlers.get(type);
     if (!listener) {
@@ -477,14 +477,14 @@ class PushNotificationIOS {
    * This method returns a promise that resolves to either the notification
    * object if the app was launched by a push notification, or `null` otherwise.
    */
-  static getInitialNotification(): Promise<?PushNotificationIOS> {
+  static getInitialNotification(): Promise<?RNPushNotificationIOS> {
     return RNPushNotificationManager.getInitialNotification().then(notification => {
-      return notification && new PushNotificationIOS(notification);
+      return notification && new RNPushNotificationIOS(notification);
     });
   }
 
   /**
-   * You will never need to instantiate `PushNotificationIOS` yourself.
+   * You will never need to instantiate `RNPushNotificationIOS` yourself.
    * Listening to the `notification` event and invoking
    * `getInitialNotification` is sufficient
    */
@@ -559,7 +559,7 @@ class PushNotificationIOS {
    * Call this to execute when the remote notification handling is complete. When
    * calling this block, pass in the fetch result value that best describes
    * the results of your operation. You *must* call this handler and should do so
-   * as soon as possible. For a list of possible values, see `PushNotificationIOS.FetchResult`.
+   * as soon as possible. For a list of possible values, see `RNPushNotificationIOS.FetchResult`.
    *
    * If you do not call this method your background remote notifications could
    * be throttled, to read more about it see the above documentation link.
@@ -581,7 +581,7 @@ class PushNotificationIOS {
    * Call this to decide how to present a foreground notification once you have
    * handled it. When calling this block, pass in an array of strings determining
    * how the notification should be displayed. You *must* call this handler and should
-   * do so as soon as possible. For a list of possible values, see `PushNotificationIOS.PresentationOptions`.
+   * do so as soon as possible. For a list of possible values, see `RNPushNotificationIOS.PresentationOptions`.
    *
    * If you do not call this method the notification will not be shown in the foreground.
    */
