@@ -328,6 +328,13 @@ Notifications.requestPermissions = function() {
 	}
 };
 
+// Stock setNotificationCategories function
+Notifications.setNotificationCategories = function() {
+	if ( Platform.OS === 'ios' ) {
+		return this.callNative('setNotificationCategories', arguments);
+	}
+};
+
 /* Fallback functions */
 Notifications.presentLocalNotification = function() {
 	return this.callNative('presentLocalNotification', arguments);
