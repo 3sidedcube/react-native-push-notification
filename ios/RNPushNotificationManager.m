@@ -962,11 +962,19 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
         reject(RNErrorRemoteNotificationRegistrationFailed, nil, RCTErrorWithMessage(@"Push notification permissions weren't granted"));
       } else {
         [RCTSharedApplication() registerForRemoteNotifications];
+				NSDictionary *notificationTypes = @{
+																						@"alert": @((types & UNAuthorizationOptionAlert) > 0),
+																						@"sound": @((types & UNAuthorizationOptionSound) > 0),
+																						@"badge": @((types & UNAuthorizationOptionSound) > 0),
+																						};
+				
+				_requestPermissionsResolveBlock(notificationTypes);
+				_requestPermissionsResolveBlock = nil;
       }
     }];
-    
+		
   } else {
-    
+		
     UIUserNotificationType types = UIUserNotificationTypeNone;
     if (permissions) {
       if ([RCTConvert BOOL:permissions[@"alert"]]) {
