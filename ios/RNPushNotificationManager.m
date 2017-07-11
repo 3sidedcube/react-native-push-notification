@@ -312,14 +312,12 @@ RCT_ENUM_CONVERTER(UIBackgroundFetchResult, (@{
 @property (nonatomic, strong) NSMutableDictionary *remoteNotificationCallbacks;
 @property (nonatomic, strong) NSMutableDictionary *willPresentNotificationCallbacks;
 @property (nonatomic, strong) NSMutableDictionary *responseCallbacks;
+@property (nonatomic, strong) RCTPromiseResolveBlock requestPermissionsResolveBlock;
 @end
 
 #endif //TARGET_OS_TV
 
 @implementation RNPushNotificationManager
-{
-  RCTPromiseResolveBlock _requestPermissionsResolveBlock;
-}
                    
 #if !TARGET_OS_TV
 
@@ -687,7 +685,7 @@ RCT_EXPORT_MODULE()
 
 - (void)handleRegisterUserNotificationSettings:(NSNotification *)notification
 {
-  if (_requestPermissionsResolveBlock == nil) {
+  if (self.requestPermissionsResolveBlock == nil) {
     return;
   }
   
@@ -698,10 +696,10 @@ RCT_EXPORT_MODULE()
                                       @"badge": @((notificationSettings.types & UIUserNotificationTypeBadge) > 0),
                                       };
   
-  _requestPermissionsResolveBlock(notificationTypes);
+  self.requestPermissionsResolveBlock(notificationTypes);
   // Clean up listener added in requestPermissions
 //  [self removeListeners:1];
-  _requestPermissionsResolveBlock = nil;
+  self.requestPermissionsResolveBlock = nil;
 }
 
 RCT_EXPORT_METHOD(onFinishNotificationResponse:(NSString *)notificationId) {
@@ -923,7 +921,7 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
     return;
   }
   
-  if (_requestPermissionsResolveBlock != nil) {
+  if (self.requestPermissionsResolveBlock != nil) {
     RCTLogError(@"Cannot call requestPermissions twice before the first has returned.");
     return;
   }
@@ -931,7 +929,7 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
   // Add a listener to make sure that startObserving has been called
 //  [self addListener:@"remoteNotificationsRegistered"];
   
-  _requestPermissionsResolveBlock = resolve;
+  self.requestPermissionsResolveBlock = resolve;
   
   if ([UNUserNotificationCenter class]) {
     
@@ -954,6 +952,8 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
     }
     
     UNUserNotificationCenter *notificationCenter = [UNUserNotificationCenter currentNotificationCenter];
+		
+		__weak typeof(self) welf = self;
     
     [notificationCenter requestAuthorizationWithOptions:types completionHandler:^(BOOL granted, NSError * _Nullable error) {
       if (error) {
@@ -968,8 +968,8 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
 																						@"badge": @((types & UNAuthorizationOptionSound) > 0),
 																						};
 				
-				_requestPermissionsResolveBlock(notificationTypes);
-				_requestPermissionsResolveBlock = nil;
+				welf.requestPermissionsResolveBlock(notificationTypes);
+				welf.requestPermissionsResolveBlock = nil;
       }
     }];
 		
