@@ -957,8 +957,10 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
     
     [notificationCenter requestAuthorizationWithOptions:types completionHandler:^(BOOL granted, NSError * _Nullable error) {
       if (error) {
+		self.requestPermissionsResolveBlock = nil;
         reject(error.domain, error.localizedDescription, error);
       } else if (!granted) {
+		self.requestPermissionsResolveBlock = nil;
         reject(RNErrorRemoteNotificationRegistrationFailed, nil, RCTErrorWithMessage(@"Push notification permissions weren't granted"));
       } else {
         [RCTSharedApplication() registerForRemoteNotifications];
