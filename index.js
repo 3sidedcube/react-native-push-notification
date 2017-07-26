@@ -245,7 +245,7 @@ Notifications._onResponse = function(data: Object, isFromBackground = null) {
 			},
 			action: data.action,
 			userText: data.userText,
-			completion: data.notification.completeResponse
+			nativeNotification: data.notification
 		})
 	}
 }
@@ -268,7 +268,7 @@ Notifications._onWillPresent = function(notificationData: Object) {
 				category: notificationData.getCategory(),
 				id: notificationData.getId()
 			},
-			present: notificationData.presentForeground
+			nativeNotification: notificationData
 		})
 	}
 }
