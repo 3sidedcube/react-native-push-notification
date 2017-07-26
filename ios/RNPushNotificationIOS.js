@@ -504,9 +504,9 @@ class RNPushNotificationIOS {
       Object.keys(nativeNotif).forEach((notifKey) => {
         var notifVal = nativeNotif[notifKey];
         if (notifKey === 'aps') {
-          this._alert = notifVal.alert;
-          this._sound = notifVal.sound;
-          this._badgeCount = notifVal.badge;
+          this._alert = notifVal.alert || notifVal.alertBody;
+          this._sound = notifVal.sound || notifVal.soundName;
+          this._badgeCount = notifVal.badge || nativeNotif.applicationIconBadgeNumber;
           this._title = notifVal.alertTitle;
           this._subtitle = notifVal.alertSubtitle;
           this._category = notifVal.category;
