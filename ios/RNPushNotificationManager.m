@@ -595,12 +595,19 @@ RCT_EXPORT_MODULE()
   NSMutableDictionary *responseDictionary = [NSMutableDictionary dictionary];
   NSMutableDictionary *responseNotification = [RNFormatNotification(response.notification) mutableCopy];
   
-  NSString *notificationId = responseNotification[@"notificationId"];
-  if (!notificationId) {
-    notificationId = [[NSUUID UUID] UUIDString];
-    responseNotification[@"notificationId"] = notificationId;
-  }
-  
+	NSString *notificationId = responseNotification[@"notificationId"];
+	if (!notificationId) {
+		
+		if (responseNotification[@"aps"] && [responseNotification[@"aps"] isKindOfClass:[NSDictionary class]]) {
+			notificationId = responseNotification[@"aps"][@"notificationId"];
+		}
+		
+		if (!notificationId) {
+			notificationId = [[NSUUID UUID] UUIDString];
+			responseNotification[@"notificationId"] = notificationId;
+		}
+	}
+	
   responseDictionary[@"notification"] = responseNotification;
   responseDictionary[@"action"] = RCTNullIfNil(response.actionIdentifier);
   
@@ -629,8 +636,15 @@ RCT_EXPORT_MODULE()
   
   NSString *notificationId = remoteNotification[@"notificationId"];
   if (!notificationId) {
-    notificationId = [[NSUUID UUID] UUIDString];
-    remoteNotification[@"notificationId"] = notificationId;
+		
+		if (remoteNotification[@"aps"] && [remoteNotification[@"aps"] isKindOfClass:[NSDictionary class]]) {
+			notificationId = remoteNotification[@"aps"][@"notificationId"];
+		}
+		
+		if (!notificationId) {
+			notificationId = [[NSUUID UUID] UUIDString];
+			remoteNotification[@"notificationId"] = notificationId;
+		}
   }
   
   if (completionHandler) {
@@ -957,11 +971,11 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
     
     [notificationCenter requestAuthorizationWithOptions:types completionHandler:^(BOOL granted, NSError * _Nullable error) {
       if (error) {
-		self.requestPermissionsResolveBlock = nil;
         reject(error.domain, error.localizedDescription, error);
+				welf.requestPermissionsResolveBlock = nil;
       } else if (!granted) {
-		self.requestPermissionsResolveBlock = nil;
         reject(RNErrorRemoteNotificationRegistrationFailed, nil, RCTErrorWithMessage(@"Push notification permissions weren't granted"));
+				welf.requestPermissionsResolveBlock = nil;
       } else {
         [RCTSharedApplication() registerForRemoteNotifications];
 				NSDictionary *notificationTypes = @{
