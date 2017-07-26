@@ -252,7 +252,24 @@ Notifications._onResponse = function(data: Object, isFromBackground = null) {
 
 Notifications._onWillPresent = function(notificationData: Object) {
 	if ( this.onWillPresent !== false ) {
-		this.onWillPresent(notificationData)
+		this.onWillPresent({
+			notification: {
+				foreground: true,
+				userInteraction: false,
+				message: notificationData.getMessage(),
+				title: notificationData.getTitle(),
+				subtitle: notificationData.getSubtitle(),
+				data: notificationData.getData(),
+				badge: notificationData.getBadgeCount(),
+				alert: notificationData.getAlert(),
+				sound: notificationData.getSound(),
+				threadId: notificationData.getThreadId(),
+				trigger: notificationData.getTrigger(),
+				category: notificationData.getCategory(),
+				id: notificationData.getId()
+			},
+			present: notificationData.presentForeground
+		})
 	}
 }
 
