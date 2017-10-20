@@ -977,7 +977,10 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
         reject(RNErrorRemoteNotificationRegistrationFailed, nil, RCTErrorWithMessage(@"Push notification permissions weren't granted"));
 				welf.requestPermissionsResolveBlock = nil;
       } else {
-        [RCTSharedApplication() registerForRemoteNotifications];
+				
+				[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+						[RCTSharedApplication() registerForRemoteNotifications];
+				}];
 				NSDictionary *notificationTypes = @{
 																						@"alert": @((types & UNAuthorizationOptionAlert) > 0),
 																						@"sound": @((types & UNAuthorizationOptionSound) > 0),
