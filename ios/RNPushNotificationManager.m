@@ -974,7 +974,12 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions resolver:(RCTPr
         reject(error.domain, error.localizedDescription, error);
 				welf.requestPermissionsResolveBlock = nil;
       } else if (!granted) {
-        reject(RNErrorRemoteNotificationRegistrationFailed, nil, RCTErrorWithMessage(@"Push notification permissions weren't granted"));
+        // This isn't an error, so don't treat it as one, just send back false for all notification types.
+        welf.requestPermissionsResolveBlock(@{
+                                              @"alert": false,
+                                              @"sound": false,
+                                              @"badge": false
+                                              });
 				welf.requestPermissionsResolveBlock = nil;
       } else {
 				
