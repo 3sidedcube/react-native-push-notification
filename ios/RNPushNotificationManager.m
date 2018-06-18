@@ -226,7 +226,7 @@ RCT_ENUM_CONVERTER(UIBackgroundFetchResult, (@{
   } else if (region) {
     trigger = [UNLocationNotificationTrigger triggerWithRegion:region repeats:repeats];
   } else {
-    trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval repeats:repeats];
+    trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:max(timeInterval, 1) repeats:repeats];
   }
   
   UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:[RCTConvert NSString:details[@"notificationId"]] ?: [NSUUID new].UUIDString content:content trigger:trigger];
