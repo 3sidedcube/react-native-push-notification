@@ -64,6 +64,10 @@ Notifications.configure = function(options: Object) {
 		this.onResponse = options.onResponse;
 	}
 
+	if ( typeof options.onPermissionResult !== 'undefined' ) {
+		this.onPermissionResult = options.onPermissionResult;
+	}
+
 	if ( typeof options.onWillPresent !== 'undefined' ) {
 		this.onWillPresent = options.onWillPresent;
 	}
@@ -331,8 +335,12 @@ Notifications._onNotification = function(data, isFromBackground = null) {
 };
 
 /* onResultPermissionResult */
-Notifications._onPermissionResult = function() {
+Notifications._onPermissionResult = function(result) {
 	this.isPermissionsRequestPending = false;
+
+	if (this.onPermissionResult) {
+		this.onPermissionResult(result?.alert && result?.badge && result?.sound);
+	}
 };
 
 // Prevent requestPermissions called twice if ios result is pending
@@ -341,8 +349,8 @@ Notifications._requestPermissions = function() {
 		if ( this.isPermissionsRequestPending === false ) {
 			this.isPermissionsRequestPending = true;
 			return this.callNative( 'requestPermissions', [ this.permissions ])
-							.then(this._onPermissionResult.bind(this))
-							.catch(this._onPermissionResult.bind(this));
+							.then(result => this._onPermissionResult(result))
+							.catch(this._onPermissionResult(null));
 		}
 	} else if ( typeof this.senderID !== 'undefined' ) {
 		return this.callNative( 'requestPermissions', [ this.senderID ]);
