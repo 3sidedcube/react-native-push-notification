@@ -1,9 +1,12 @@
 package com.dieam.reactnativepushnotification.modules;
 
+import java.util.Map;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +17,6 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONObject;
 
@@ -23,14 +25,34 @@ import java.util.Random;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
-public class RNPushNotificationListenerService extends GcmListenerService {
+public class RNPushNotificationListenerService extends FirebaseMessagingService {
 
     @Override
-    public void onMessageReceived(String from, final Bundle bundle) {
+    public void onMessageReceived(RemoteMessage message) {
+        String from = message.getFrom();
+        RemoteMessage.Notification remoteNotification = message.getNotification();
+
+        final Bundle bundle = new Bundle();
+        // Putting it from remoteNotification first so it can be overriden if message
+        // data has it
+        if (remoteNotification != null) {
+            // ^ It's null when message is from GCM
+            bundle.putString("title", remoteNotification.getTitle());
+            bundle.putString("message", remoteNotification.getBody());
+        }
+
+        for(Map.Entry<String, String> entry : message.getData().entrySet()) {
+            bundle.putString(entry.getKey(), entry.getValue());
+        }
         JSONObject data = getPushData(bundle.getString("data"));
+        // Copy `twi_body` to `message` to support Twilio
+        if (bundle.containsKey("twi_body")) {
+            bundle.putString("message", bundle.getString("twi_body"));
+        }
+
         if (data != null) {
             if (!bundle.containsKey("message")) {
-                bundle.putString("message", data.optString("alert", "Notification received"));
+                bundle.putString("message", data.optString("alert", null));
             }
             if (!bundle.containsKey("title")) {
                 bundle.putString("title", data.optString("title", null));
@@ -63,7 +85,16 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                 if (context != null) {
                     handleRemotePushNotification((ReactApplicationContext) context, bundle);
                 } else {
-                    handleRemotePushNotification(getApplicationContext(), bundle);
+                    // Otherwise wait for construction, then send the notification
+                    mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+                        public void onReactContextInitialized(ReactContext context) {
+                            handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                        }
+                    });
+                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
+                        // Construct it in the background
+                        mReactInstanceManager.createReactContextInBackground();
+                    }
                 }
             }
         });
@@ -77,7 +108,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
         }
     }
 
-    private void handleRemotePushNotification(Context context, Bundle bundle) {
+    private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
@@ -87,25 +118,21 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Boolean isForeground = isApplicationInForeground();
 
-        if (context instanceof ReactApplicationContext)
-        {
-            RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery((ReactApplicationContext)context);
-            bundle.putBoolean("foreground", isForeground);
-            bundle.putBoolean("userInteraction", false);
-            jsDelivery.notifyNotification(bundle);
-            // If contentAvailable is set to true, then send out a remote fetch event
-            if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
-                jsDelivery.notifyRemoteFetch(bundle);
-            }
+        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
+        bundle.putBoolean("foreground", isForeground);
+        bundle.putBoolean("userInteraction", false);
+        jsDelivery.notifyNotification(bundle);
+
+        // If contentAvailable is set to true, then send out a remote fetch event
+        if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+            jsDelivery.notifyRemoteFetch(bundle);
         }
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        //if (!isForeground) {
-            Application applicationContext = (Application) context.getApplicationContext();
-            RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
-            pushNotificationHelper.sendToNotificationCentre(bundle);
-        //}
+        Application applicationContext = (Application) context.getApplicationContext();
+        RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
+        pushNotificationHelper.sendToNotificationCentre(bundle);
     }
 
     private boolean isApplicationInForeground() {
