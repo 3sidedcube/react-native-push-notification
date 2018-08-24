@@ -188,7 +188,6 @@ Notifications.localNotificationSchedule = function(details: Object, completion: 
 			alertTitle: details.title,
 			alertBody: details.message,
 			alertSubtitle: details.subtitle,
-			alertTitle: details.title,
 			category: details.category,
 			isSilent: !details.playSound,
 			soundName: soundName,
