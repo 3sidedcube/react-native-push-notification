@@ -1,26 +1,24 @@
 package com.dieam.reactnativepushnotification.modules;
 
-import java.util.Map;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
@@ -83,18 +81,9 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
                 ReactContext context = mReactInstanceManager.getCurrentReactContext();
                 // If it's constructed, send a notification
                 if (context != null) {
-                    handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                    handleRemotePushNotification(context, bundle);
                 } else {
-                    // Otherwise wait for construction, then send the notification
-                    mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                        public void onReactContextInitialized(ReactContext context) {
-                            handleRemotePushNotification((ReactApplicationContext) context, bundle);
-                        }
-                    });
-                    if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
-                        // Construct it in the background
-                        mReactInstanceManager.createReactContextInBackground();
-                    }
+                    handleRemotePushNotification(getApplicationContext(), bundle);
                 }
             }
         });
@@ -108,7 +97,7 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
         }
     }
 
-    private void handleRemotePushNotification(ReactApplicationContext context, Bundle bundle) {
+    private void handleRemotePushNotification(Context context, Bundle bundle) {
 
         // If notification ID is not provided by the user for push notification, generate one at random
         if (bundle.getString("id") == null) {
@@ -116,16 +105,19 @@ public class RNPushNotificationListenerService extends FirebaseMessagingService 
             bundle.putString("id", String.valueOf(randomNumberGenerator.nextInt()));
         }
 
-        Boolean isForeground = isApplicationInForeground();
+        if (context instanceof ReactApplicationContext)
+        {
+            Boolean isForeground = isApplicationInForeground();
 
-        RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery(context);
-        bundle.putBoolean("foreground", isForeground);
-        bundle.putBoolean("userInteraction", false);
-        jsDelivery.notifyNotification(bundle);
+            RNPushNotificationJsDelivery jsDelivery = new RNPushNotificationJsDelivery((ReactApplicationContext) context);
+            bundle.putBoolean("foreground", isForeground);
+            bundle.putBoolean("userInteraction", false);
+            jsDelivery.notifyNotification(bundle);
 
-        // If contentAvailable is set to true, then send out a remote fetch event
-        if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
-            jsDelivery.notifyRemoteFetch(bundle);
+            // If contentAvailable is set to true, then send out a remote fetch event
+            if (bundle.getString("contentAvailable", "false").equalsIgnoreCase("true")) {
+                jsDelivery.notifyRemoteFetch(bundle);
+            }
         }
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
