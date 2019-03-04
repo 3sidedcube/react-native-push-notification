@@ -23,21 +23,12 @@ def DEFAULT_GOOGLE_PLAY_SERVICES_VERSION = "+"
 def DEFAULT_FIREBASE_MESSAGING_VERSION = "+"
 
 android {
-<<<<<<< HEAD
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
-
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
-=======
     compileSdkVersion project.hasProperty('compileSdkVersion') ? project.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
     buildToolsVersion project.hasProperty('buildToolsVersion') ? project.buildToolsVersion : DEFAULT_BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion project.hasProperty('targetSdkVersion') ? project.targetSdkVersion : DEFAULT_TARGET_SDK_VERSION
->>>>>>> origin/develop
         versionCode 1
         versionName "1.0"
         ndk {
@@ -59,11 +50,7 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-<<<<<<< HEAD
-    compile 'com.android.support:appcompat-v7:25.3.1'
-=======
     compile "com.android.support:appcompat-v7:$supportLibVersion"
->>>>>>> origin/develop
     compile 'com.facebook.react:react-native:+'
     compile "com.google.android.gms:play-services-gcm:$googlePlayServicesVersion"
     compile 'me.leolin:ShortcutBadger:1.1.8@aar'
